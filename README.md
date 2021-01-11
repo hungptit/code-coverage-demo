@@ -1,4 +1,4 @@
-# code-coverage-demo
+# How to support code coverage report in your C++ in 3 steps
 
 # Introduction #
 
