@@ -24,6 +24,7 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 include(FetchContent)
 
 # Add doctest
+message("Config doctest")
 FetchContent_Declare(
   doctest
   GIT_REPOSITORY https://github.com/onqtam/doctest.git
@@ -34,6 +35,7 @@ set(DOCTEST_WITH_TESTS OFF)
 FetchContent_MakeAvailable(doctest)
 
 # Eigen
+message("Config Eigen")
 FetchContent_Declare(
   eigen
   GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
@@ -42,6 +44,7 @@ set(BUILD_TESTING OFF)
 FetchContent_Populate(eigen)
 
 # Add cmake-scripts
+message("Config cmake-scripts")
 FetchContent_Declare(
   cmake_scripts
   GIT_REPOSITORY https://github.com/StableCoder/cmake-scripts.git
