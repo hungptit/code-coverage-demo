@@ -9,19 +9,9 @@ Code coverage is an important metrics to measure our code quality. This blog pos
 
 # What is code coverage #
 
-Code coverage analysis is a measurement that is taken when running program that is taken on running program code reporting how much of that code was executed. Specifically, code coverage usually tells you how many times each line of code was executed. There are various forms of coverage metrics, such as function coverage, sequence point coverage, statement coverage and branch coverage. I’ll elaborate on some of these in later posts. For now, NCover supports sequence point (which is basically statement coverage) and branch coverage. 
-
 # Why do we need code coverage #
 
-Code coverage is most valuable as a feedback mechanism for test-driven or agile development methodologies. Both of these methods rely on a developmental feedback loop that promotes the addition of features while maintaining a predictable quality level. Code quality is one of the most important concerns of any software development organization. Rapid development and technical wizardry will do you no good if customers can’t rely on the quality of your product.
-
-The way most modern software development teams maintain the quality of their software is by building a suite of unit tests that automate the verification of code correctness. These unit test suites are designed to run through (often thousands) of simulated program functions, verifying that the code is producing the expected output. While creating a number of unit tests is laudable, just creating a suite of tests alone is not enough. After some point, adding more tests does not necessarily mean that the code has better quality. You may just be testing the same code over and over again, while missing an important piece of code entirely. Any bugs in code that is not tested will not be detected by your unit test suite and thus could creep into production.
-
-Coverage analysis closes that feedback loop by reporting on the comprehensiveness of your unit tests. Code coverage reports allow developers to quickly find code that is not executed by the test suite.
-
 # When should we use code coverage #
-
-Early and Often…is the short answer. The heart of an iterative development environment is a continuous integration server. Each time a developer checks code into your revision control system (or on a regularly scheduled cycle), the build server should check out the latest code, do a full build of the product, run the test suite and report test success/failure and code coverage metrics. A continuous build process facilitates the early detection of code errors. Immediate reporting of code coverage also makes it clear to everyone on the team if the quality of your tests are increasing or declining.
 
 # The code coverage workflow #
 
