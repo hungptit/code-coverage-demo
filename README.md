@@ -180,7 +180,7 @@ where
 * There is a CMakeLists.txt file at the root folder that handles below tasks
   * Downloading all dependencies for our project i.e [doctest](https://github.com/onqtam/doctest) and [Eigen](https://gitlab.com/libeigen/eigen).
   * Formating and linting all CMake and C++ files automatically using cmake-format, cmake-lint, and clang-format.
-  * Create a static library named **libcode-coverage-demo.a**
+  * Create a static librqary named **libcode-coverage-demo.a**
   * Compile and run all unit tests.
 * The **src** folder stores all source code and these source files will be compiled into a static library named **libcode-coverage-demo.a**
 * All test files are in the unittests folder.
