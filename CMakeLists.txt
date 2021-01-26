@@ -19,7 +19,8 @@ add_compile_options(-pedantic-errors)
 set(POSITION_INDEPENDENT_CODE ON)
 set(ENABLE_ALL_WARNINGS ON)
 
-set(CMAKE_VERBOSE_MAKEFILE ON)
+# Enable the Makefile verbose mode to show verbose build information in macOS or Linux.
+set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 include(FetchContent)
 
