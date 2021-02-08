@@ -148,7 +148,7 @@ foreach(src_file ${SRC_FILES})
 endforeach(src_file)
 ```
 
-### Step 3:  ###
+### Step 3: Update the root level CMakeLists.txt and generate the code coverage report ###
 
 Most heavy work will be done in this step including:
 * Tell CMake to download cmake-scripts and store it in _deps folder.
