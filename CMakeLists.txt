@@ -19,13 +19,13 @@ add_compile_options(-pedantic-errors)
 set(POSITION_INDEPENDENT_CODE ON)
 set(ENABLE_ALL_WARNINGS ON)
 
-# Enable the Makefile verbose mode to show verbose build information in macOS or Linux.
+# Enable the Makefile verbose mode to show verbose build information in macOS or
+# Linux.
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 include(FetchContent)
 
 # Add doctest
-message("Config doctest")
 FetchContent_Declare(
   doctest
   GIT_REPOSITORY https://github.com/onqtam/doctest.git
@@ -36,7 +36,6 @@ set(DOCTEST_WITH_TESTS OFF)
 FetchContent_MakeAvailable(doctest)
 
 # Eigen
-message("Config Eigen")
 FetchContent_Declare(
   eigen
   GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
@@ -45,7 +44,6 @@ set(BUILD_TESTING OFF)
 FetchContent_Populate(eigen)
 
 # Add cmake-scripts
-message("Config cmake-scripts")
 FetchContent_Declare(
   cmake_scripts
   GIT_REPOSITORY https://github.com/StableCoder/cmake-scripts.git
@@ -62,7 +60,7 @@ include(tools)
 include(dependency-graph)
 
 # Exclude test files from the code coverage report.
-file(GLOB_RECURSE TEST_SRCS unittests/*_test.cpp)
+file(GLOB_RECURSE TEST_SRCS CONFIGURE_DEPENDS unittests/*_test.cpp)
 add_code_coverage_all_targets(EXCLUDE _deps/ ${TEST_SRCS})
 
 # Include folders
@@ -73,8 +71,14 @@ add_subdirectory(src)
 add_subdirectory(unittests)
 
 # Formating and linting all related files
-file(GLOB_RECURSE SRCS_AND_HDRS unittests/*.[hc]pp unittests/*.hpp src/*.hpp
-     src/encoding/*.[hc]pp)
+file(
+  GLOB_RECURSE
+  SRCS_AND_HDRS
+  CONFIGURE_DEPENDS
+  unittests/*.[hc]pp
+  unittests/*.hpp
+  src/*.hpp
+  src/encoding/*.[hc]pp)
 
 find_program(CLANG_FORMAT NAMES clang-format)
 add_custom_command(
@@ -85,7 +89,7 @@ add_custom_command(
   COMMENT "Format C++ files with clang-format."
   VERBATIM)
 
-file(GLOB CMAKE_FILES CMakeLists.txt src/CMakeLists.txt)
+set(CMAKE_FILES "CMakeLists.txt" "src/CMakeLists.txt")
 find_program(CMAKE_FORMAT NAMES cmake-format)
 if(${CMAKE_FORMAT} STREQUAL "CMAKE_FORMAT-NOTFOUND")
   add_custom_command(
