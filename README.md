@@ -1,4 +1,4 @@
-# How to support code coverage report in your CMake C++ project
+# How to generate the code coverage report for your CMake C++ projects
 
 ## What is code coverage? ##
 
@@ -195,3 +195,15 @@ TOTAL                                  44                 4    90.91%           
 The text-based reports work fine for our purpose, however, we can also open the HTML reports in the `ccov/all-merged/` folder which allow us navigating through coverage reports in our favourist web browser.
 
 That's all folks. Supporting code coverage analysis is quite simple for any CMake C++ project. Let us (Hung Dang, Khoi Nguyen, and Huyen Nguyen) know your thoughts.
+
+## FAQs ##
+
+### How can I build the demo? ###
+
+Run below commands in any Linux/macOS terminal to generate the code coverage report for our demo, assuming LLVM toolchain has been installed in the search path.
+
+``` shell
+git clone https://github.com/hungptit/code-coverage-demo.git
+cd code-coverage-demo
+./build_all.sh
+```

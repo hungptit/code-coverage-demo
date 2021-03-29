@@ -41,7 +41,7 @@ FetchContent_Declare(
 
 FetchContent_Populate(cmake_scripts)
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/_deps/cmake_scripts-src/;")
+set(CMAKE_MODULE_PATH "${cmake_scripts_SOURCE_DIR}/;")
 include(c++-standards)
 include(code-coverage)
 include(sanitizers)
