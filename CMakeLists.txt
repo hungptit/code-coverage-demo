@@ -25,15 +25,6 @@ set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 include(FetchContent)
 
-# Add doctest
-FetchContent_Declare(
-  doctest
-  GIT_REPOSITORY https://github.com/onqtam/doctest.git
-  GIT_TAG 2.4.4)
-
-set(DOCTEST_WITH_TESTS OFF)
-FetchContent_MakeAvailable(doctest)
-
 # Eigen
 FetchContent_Declare(
   eigen
@@ -115,7 +106,7 @@ else()
     VERBATIM)
 endif()
 
-file(GLOB SH_SRCS 3p/*.sh)
+file(GLOB SH_SRCS *.sh)
 find_program(SHFORMAT NAMES shformat)
 if(${SHFORMAT} STREQUAL "SHFORMAT-NOTFOUND")
   add_custom_command(
@@ -151,7 +142,7 @@ else()
   add_custom_command(
     OUTPUT .lint_shellcheck_stamp
     DEPENDS ${SH_SRCS}
-    COMMAND shellcheck ${SH_SRCS}
+    COMMAND ${SHELLCHECK} ${SH_SRCS}
     COMMAND touch .lint_shellcheck_stamp
     COMMENT "Lint Bash files with shellcheck.")
 endif()
