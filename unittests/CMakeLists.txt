@@ -18,5 +18,5 @@ foreach(target ${TARGETS})
   target_link_libraries(${target} code-coverage-demo)
   target_code_coverage(${target} AUTO ALL)
   add_test(${target} ./${target})
-endforeach(targete)
+endforeach()
 
