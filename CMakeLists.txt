@@ -28,8 +28,7 @@ message("Config doctest")
 FetchContent_Declare(
   doctest
   GIT_REPOSITORY https://github.com/onqtam/doctest.git
-  GIT_TAG 2.4.4
-  GIT_SHALLOW TRUE)
+  GIT_TAG 2.4.4)
 
 set(DOCTEST_WITH_TESTS OFF)
 FetchContent_MakeAvailable(doctest)
@@ -48,8 +47,7 @@ message("Config cmake-scripts")
 FetchContent_Declare(
   cmake_scripts
   GIT_REPOSITORY https://github.com/StableCoder/cmake-scripts.git
-  GIT_TAG main
-  GIT_SHALLOW TRUE)
+  GIT_TAG 20.11)
 
 FetchContent_Populate(cmake_scripts)
 
@@ -76,13 +74,22 @@ file(GLOB_RECURSE SRCS_AND_HDRS unittests/*.[hc]pp unittests/*.hpp src/*.hpp
      src/encoding/*.[hc]pp)
 
 find_program(CLANG_FORMAT NAMES clang-format)
-add_custom_command(
-  OUTPUT .format_cpp_stamp
-  DEPENDS ${SRCS_AND_HDRS}
-  COMMAND ${CLANG_FORMAT} -i ${SRCS_AND_HDRS}
-  COMMAND touch .format_cpp_stamp
-  COMMENT "Format C++ files with clang-format."
-  VERBATIM)
+if(${CLANG_FORMAT} STREQUAL "CLANG_FORMAT-NOTFOUND")
+  add_custom_command(
+    OUTPUT .format_cpp_stamp
+    DEPENDS ${SRCS_AND_HDRS}
+    COMMAND touch .format_cpp_stamp
+    COMMENT "Could not find clang-format. Skip formating C++ files."
+    VERBATIM)
+else()
+  add_custom_command(
+    OUTPUT .format_cpp_stamp
+    DEPENDS ${SRCS_AND_HDRS}
+    COMMAND ${CLANG_FORMAT} -i ${SRCS_AND_HDRS}
+    COMMAND touch .format_cpp_stamp
+    COMMENT "Format C++ files with clang-format."
+    VERBATIM)
+endif()
 
 file(GLOB CMAKE_FILES CMakeLists.txt src/CMakeLists.txt)
 find_program(CMAKE_FORMAT NAMES cmake-format)
@@ -113,46 +120,57 @@ if(${SHFORMAT} STREQUAL "SHFORMAT-NOTFOUND")
     COMMENT "Skip formatting Bash scripts."
     VERBATIM)
 else()
-  if(UNIX AND NOT APPLE)
-    add_custom_command(
-      OUTPUT .format_bash_stamp
-      DEPENDS ${SH_SRCS}
-      COMMAND ${SHFORMAT} -i 2 -ci -w ${SH_SRCS}
-      COMMAND touch .format_bash_stamp
-      COMMENT "Format Bash scripts with shformat."
-      VERBATIM)
-  else()
-    add_custom_command(
-      OUTPUT .format_bash_stamp
-      DEPENDS ${SH_SRCS}
-      COMMAND touch .format_bash_stamp
-      COMMENT "Skip formatting Bash scripts."
-      VERBATIM)
-  endif()
+  add_custom_command(
+    OUTPUT .format_bash_stamp
+    DEPENDS ${SH_SRCS}
+    COMMAND ${SHFORMAT} -i 2 -ci -w ${SH_SRCS}
+    COMMAND touch .format_bash_stamp
+    COMMENT "Format Bash scripts with shformat."
+    VERBATIM)
 endif()
 
 add_custom_target(
   format
-  DEPENDS .format_cpp_stamp .format_cmake_stamp
+  DEPENDS .format_cpp_stamp .format_cpp_stamp .format_cmake_stamp
   COMMENT "Format Bash, C++, and CMake files.")
 
-add_custom_command(
-  OUTPUT .lint_shellcheck_stamp
-  DEPENDS ${SH_SRCS}
-  COMMAND shellcheck ${SH_SRCS}
-  COMMAND touch .lint_shellcheck_stamp
-  COMMENT "Lint Bash files with shellcheck.")
+find_program(SHELLCHECK NAMES shellcheck)
+if(${SHELLCHECK} STREQUAL "SHELLCHECK-NOTFOUND")
+  add_custom_command(
+    OUTPUT .lint_shellcheck_stamp
+    DEPENDS ${SH_SRCS}
+    COMMAND touch .lint_shellcheck_stamp
+    COMMENT "Skip linting Bash scripts."
+    VERBATIM)
+else()
+  add_custom_command(
+    OUTPUT .lint_shellcheck_stamp
+    DEPENDS ${SH_SRCS}
+    COMMAND shellcheck ${SH_SRCS}
+    COMMAND touch .lint_shellcheck_stamp
+    COMMENT "Lint Bash files with shellcheck.")
+endif()
 
-add_custom_command(
-  OUTPUT .lint_cmake_stamp
-  DEPENDS ${CMAKE_FILES}
-  COMMAND cmake-lint ${CMAKE_FILES}
-  COMMAND touch .lint_cmake_stamp
-  COMMENT "Lint CMake files with cmake-lint.")
+find_program(CMAKE_LINT NAMES cmake-lint)
+if(${CMAKE_LINT} STREQUAL "CMAKE_LINT-NOTFOUND")
+  add_custom_command(
+    OUTPUT .lint_cmake_stamp
+    DEPENDS ${CMAKE_FILES}
+    COMMAND echo "Skip linting CMake files."
+    COMMAND touch .lint_cmake_stamp
+    COMMENT "Skip linting CMake files.")
+else()
+  add_custom_command(
+    OUTPUT .lint_cmake_stamp
+    DEPENDS ${CMAKE_FILES}
+    COMMAND cmake-lint ${CMAKE_FILES}
+    COMMAND touch .lint_cmake_stamp
+    COMMENT "Lint CMake files with cmake-lint.")
+endif()
 
 add_custom_target(
   lint ALL
-  DEPENDS .lint_cmake_stamp
+  DEPENDS .lint_cmake_stamp .lint_shellcheck_stamp
   COMMENT "Lint Bash and CMake files.")
 
 enable_testing()
