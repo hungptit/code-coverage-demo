@@ -1,8 +1,7 @@
 #!/bin/bash -ex
-root_dir="$PWD"
 
 function build {
-    cmake . -DCODE_COVERAGE=ON "$@"
+    cmake . "$@"
     cmake --build . -j3
     ctest -j3
 
@@ -16,4 +15,4 @@ function build {
 }
 
 # Generate code coverage report
-build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=clang++
+build -DCODE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=clang++

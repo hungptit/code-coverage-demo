@@ -1,7 +1,7 @@
 cmake_policy(SET CMP0048 NEW)
 project(
   code-coverage-demo
-  VERSION 0.1.0
+  VERSION 1.0
   LANGUAGES CXX)
 cmake_minimum_required(VERSION 3.15)
 
@@ -29,7 +29,7 @@ include(FetchContent)
 FetchContent_Declare(
   doctest
   GIT_REPOSITORY https://github.com/onqtam/doctest.git
-  GIT_TAG 2.4.4
+  GIT_TAG master
   GIT_SHALLOW TRUE)
 
 set(DOCTEST_WITH_TESTS OFF)
@@ -39,8 +39,8 @@ FetchContent_MakeAvailable(doctest)
 FetchContent_Declare(
   eigen
   GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
-  GIT_TAG master)
-set(BUILD_TESTING OFF)
+  GIT_TAG master
+  GIT_SHALLOW TRUE)
 FetchContent_Populate(eigen)
 
 # Add cmake-scripts
@@ -52,7 +52,7 @@ FetchContent_Declare(
 
 FetchContent_Populate(cmake_scripts)
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/_deps/cmake_scripts-src/;")
+set(CMAKE_MODULE_PATH "${cmake_scripts_SOURCE_DIR};")
 include(c++-standards)
 include(code-coverage)
 include(sanitizers)
@@ -89,6 +89,7 @@ add_custom_command(
   COMMENT "Format C++ files with clang-format."
   VERBATIM)
 
+# Format CMake files
 set(CMAKE_FILES "CMakeLists.txt" "src/CMakeLists.txt")
 find_program(CMAKE_FORMAT NAMES cmake-format)
 if(${CMAKE_FORMAT} STREQUAL "CMAKE_FORMAT-NOTFOUND")
@@ -108,6 +109,7 @@ else()
     VERBATIM)
 endif()
 
+# Format Bash files
 file(GLOB SH_SRCS 3p/*.sh)
 find_program(SHFMT NAMES shfmt)
 if(${SHFMT} STREQUAL "SHFMT-NOTFOUND")
@@ -132,6 +134,7 @@ add_custom_target(
   DEPENDS .format_cpp_stamp .format_cmake_stamp
   COMMENT "Format Bash, C++, and CMake files.")
 
+# Lint Bash files
 find_program(SHELLCHECK NAMES shellcheck)
 if(${SHELLCHECK} STREQUAL "SHELLCHECK-NOTFOUND")
   add_custom_command(
@@ -149,6 +152,7 @@ else()
     COMMENT "Lint Bash files with shellcheck.")
 endif()
 
+# Lint CMake files
 find_program(CMAKE_LINT NAMES cmake-lint)
 if(${CMAKE_LINT} STREQUAL "CMAKE_LINT-NOTFOUND")
   add_custom_command(
