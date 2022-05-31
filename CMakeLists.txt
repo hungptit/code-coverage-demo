@@ -64,7 +64,7 @@ file(GLOB_RECURSE TEST_SRCS CONFIGURE_DEPENDS unittests/*_test.cpp)
 add_code_coverage_all_targets(EXCLUDE _deps/ ${TEST_SRCS})
 
 # Include folders
-include_directories("_deps/eigen-src/")
+include_directories("${eigen_SOURCE_DIR}")
 
 # Add sub-directories
 add_subdirectory(src)
@@ -109,8 +109,8 @@ else()
 endif()
 
 file(GLOB SH_SRCS 3p/*.sh)
-find_program(SHFORMAT NAMES shformat)
-if(${SHFORMAT} STREQUAL "SHFORMAT-NOTFOUND")
+find_program(SHFMT NAMES shfmt)
+if(${SHFMT} STREQUAL "SHFMT-NOTFOUND")
   add_custom_command(
     OUTPUT .format_bash_stamp
     DEPENDS ${SH_SRCS}
@@ -118,22 +118,13 @@ if(${SHFORMAT} STREQUAL "SHFORMAT-NOTFOUND")
     COMMENT "Skip formatting Bash scripts."
     VERBATIM)
 else()
-  if(UNIX AND NOT APPLE)
-    add_custom_command(
-      OUTPUT .format_bash_stamp
-      DEPENDS ${SH_SRCS}
-      COMMAND ${SHFORMAT} -i 2 -ci -w ${SH_SRCS}
-      COMMAND touch .format_bash_stamp
-      COMMENT "Format Bash scripts with shformat."
-      VERBATIM)
-  else()
-    add_custom_command(
-      OUTPUT .format_bash_stamp
-      DEPENDS ${SH_SRCS}
-      COMMAND touch .format_bash_stamp
-      COMMENT "Skip formatting Bash scripts."
-      VERBATIM)
-  endif()
+  add_custom_command(
+    OUTPUT .format_bash_stamp
+    DEPENDS ${SH_SRCS}
+    COMMAND ${SHFMT} -i 2 -ci -w ${SH_SRCS}
+    COMMAND touch .format_bash_stamp
+    COMMENT "Format Bash scripts with shformat."
+    VERBATIM)
 endif()
 
 add_custom_target(
@@ -141,19 +132,39 @@ add_custom_target(
   DEPENDS .format_cpp_stamp .format_cmake_stamp
   COMMENT "Format Bash, C++, and CMake files.")
 
-add_custom_command(
-  OUTPUT .lint_shellcheck_stamp
-  DEPENDS ${SH_SRCS}
-  COMMAND shellcheck ${SH_SRCS}
-  COMMAND touch .lint_shellcheck_stamp
-  COMMENT "Lint Bash files with shellcheck.")
+find_program(SHELLCHECK NAMES shellcheck)
+if(${SHELLCHECK} STREQUAL "SHELLCHECK-NOTFOUND")
+  add_custom_command(
+    OUTPUT .lint_bash_stamp
+    DEPENDS ${SH_SRCS}
+    COMMAND touch .lint_bash_stamp
+    COMMENT "Skip linting Bash scripts."
+    VERBATIM)
+else()
+  add_custom_command(
+    OUTPUT .lint_shellcheck_stamp
+    DEPENDS ${SH_SRCS}
+    COMMAND shellcheck ${SH_SRCS}
+    COMMAND touch .lint_shellcheck_stamp
+    COMMENT "Lint Bash files with shellcheck.")
+endif()
 
-add_custom_command(
-  OUTPUT .lint_cmake_stamp
-  DEPENDS ${CMAKE_FILES}
-  COMMAND cmake-lint ${CMAKE_FILES}
-  COMMAND touch .lint_cmake_stamp
-  COMMENT "Lint CMake files with cmake-lint.")
+find_program(CMAKE_LINT NAMES cmake-lint)
+if(${CMAKE_LINT} STREQUAL "CMAKE_LINT-NOTFOUND")
+  add_custom_command(
+    OUTPUT .lint_cmake_stamp
+    DEPENDS ${CMAKE_FILES}
+    COMMAND touch .lint_bash_stamp
+    COMMENT "Skip linting Bash scripts."
+    VERBATIM)
+else()
+  add_custom_command(
+    OUTPUT .lint_cmake_stamp
+    DEPENDS ${CMAKE_FILES}
+    COMMAND cmake-lint ${CMAKE_FILES}
+    COMMAND touch .lint_cmake_stamp
+    COMMENT "Lint CMake files with cmake-lint.")
+endif()
 
 add_custom_target(
   lint ALL
